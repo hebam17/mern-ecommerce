@@ -1,5 +1,6 @@
 import { useEffect, useReducer } from "react";
 import axios from "axios";
+import logger from "use-reducer-logger";
 import { useParams } from "react-router-dom";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -9,6 +10,9 @@ import Badge from "react-bootstrap/Badge";
 import Button from "react-bootstrap/Button";
 import Ratings from "../components/Ratings";
 import { Helmet } from "react-helmet-async";
+import LoadingBox from "../components/LoadingBox";
+import MessageBox from "../components/MessageBox";
+import { getError } from "../utils";
 
 const initialState = { loading: false, error: "", product: [] };
 
@@ -28,7 +32,7 @@ export default function ProductScreen() {
   const params = useParams();
   const { slug } = params;
   const [{ loading, error, product }, dispatch] = useReducer(
-    reducer,
+    logger(reducer),
     initialState
   );
 
@@ -38,17 +42,19 @@ export default function ProductScreen() {
       try {
         const result = await axios.get(`/api/products/slug/${slug}`);
         dispatch({ type: "FETCHING_SUCCESS", payload: result.data });
+        console.log("result:", result);
       } catch (err) {
-        dispatch({ type: "FETCHIN_FAILED", payload: err });
+        dispatch({ type: "FETCHING_FAILED", payload: getError(err) });
+        console.log("error:", err);
       }
     };
     fetchData();
   }, [slug]);
 
   return loading ? (
-    <div>Loading...</div>
+    <LoadingBox />
   ) : error ? (
-    <div>{error}</div>
+    <MessageBox variant="danger">{error}</MessageBox>
   ) : (
     <div>
       <Row>

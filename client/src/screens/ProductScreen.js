@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useContext } from "react";
 import axios from "axios";
 import logger from "use-reducer-logger";
 import { useParams } from "react-router-dom";
@@ -13,6 +13,7 @@ import { Helmet } from "react-helmet-async";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
 import { getError } from "../utils";
+import { StoreContext } from "../context/store";
 
 const initialState = { loading: false, error: "", product: [] };
 
@@ -42,14 +43,21 @@ export default function ProductScreen() {
       try {
         const result = await axios.get(`/api/products/slug/${slug}`);
         dispatch({ type: "FETCHING_SUCCESS", payload: result.data });
-        console.log("result:", result);
       } catch (err) {
         dispatch({ type: "FETCHING_FAILED", payload: getError(err) });
-        console.log("error:", err);
       }
     };
     fetchData();
   }, [slug]);
+
+  const { state, dispatch: ctxDispatch } = useContext(StoreContext);
+
+  const addToCardHandler = () => {
+    ctxDispatch({
+      type: "CART_ADD_ITEM",
+      payload: { ...product, quantity: 1 },
+    });
+  };
 
   return loading ? (
     <LoadingBox />
@@ -106,7 +114,9 @@ export default function ProductScreen() {
                 {product.countInStock > 0 && (
                   <ListGroup.Item>
                     <div className="d-grid">
-                      <Button variant="primary">Add to Card</Button>
+                      <Button onClick={addToCardHandler} variant="primary">
+                        Add to Card
+                      </Button>
                     </div>
                   </ListGroup.Item>
                 )}

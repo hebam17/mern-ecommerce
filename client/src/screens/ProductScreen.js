@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useContext } from "react";
 import axios from "axios";
 import logger from "use-reducer-logger";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ListGroup from "react-bootstrap/ListGroup";
@@ -32,6 +32,7 @@ const reducer = (state, action) => {
 export default function ProductScreen() {
   const params = useParams();
   const { slug } = params;
+  const navigate = useNavigate();
   const [{ loading, error, product }, dispatch] = useReducer(
     logger(reducer),
     initialState
@@ -65,6 +66,7 @@ export default function ProductScreen() {
       type: "CART_ADD_ITEM",
       payload: { ...product, quantity },
     });
+    navigate("/cart");
   };
 
   return loading ? (

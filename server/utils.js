@@ -6,9 +6,9 @@ module.exports = generateToken = (user) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      isAdmin: User.isAdmin,
+      isAdmin: user.isAdmin,
     },
-    process.env.process.env.JWT_SECRET,
+    process.env.JWT_SECRET,
     {
       expiresIn: "30d",
     }

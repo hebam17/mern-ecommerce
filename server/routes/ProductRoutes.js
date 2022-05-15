@@ -9,11 +9,11 @@ productRouter.get("/", async (req, res) => {
 });
 
 productRouter.get("/slug/:slug", async (req, res) => {
-  const product = await product.findOne({ slug: req.params.slug });
+  const product = await Product.findOne({ slug: req.params.slug });
   if (product) {
     res.send(product);
   } else {
-    res.status(404).send({ message: "Product Not Found!" });
+    res.status(404).send({ message: "Product Not Found" });
   }
 });
 

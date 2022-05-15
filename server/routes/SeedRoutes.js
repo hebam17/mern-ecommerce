@@ -1,7 +1,7 @@
 const express = require("express");
 const data = require("../data");
 const Product = require("../models/ProductModel.js");
-const User = require("../models/UserModel");
+const User = require("../models/UserModel.js");
 
 const seedRouter = express.Router();
 
